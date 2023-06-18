@@ -1,30 +1,33 @@
 # Real IP Revealer
 
-Real IP Revealer is a WordPress plugin that uncovers and assigns the true client IP address in environments with Cloudflare or reverse proxies. Enhance the accuracy of your logs and analytics by ensuring user IP addresses are correctly recorded, regardless of the network infrastructure you're using.
+Real IP Revealer es un plugin de WordPress que descubre y asigna la verdadera dirección IP del cliente en entornos con Cloudflare o proxies inversos.
 
-## Features
+## Descripción
 
-- Extracts the real IP address from various HTTP headers.
-- Supports environments using Cloudflare and reverse proxies.
-- Enhances the accuracy of your website logs and analytics.
+Este plugin verifica una lista de encabezados en orden y devuelve la primera IP pública válida encontrada. Si no se encuentra ninguna IP válida, se registra un error y se lanza una excepción.
 
-## Installation
+Además, el plugin muestra una notificación en el panel de administración de WordPress con la dirección IP del usuario actual.
 
-1. Upload the 'real-ip-revealer' folder to the '/wp-content/plugins/' directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
+## Requisitos
 
-## Usage
+- WordPress 6.2.2 o superior
+- PHP 7.4 o superior
 
-Once activated, the plugin will automatically extract the real IP address from the HTTP headers for each request to your website. The IP address will be stored in the `$_SERVER['REMOTE_ADDR']` variable.
+## Instalación
 
-## Support
+1. Descarga el archivo ZIP del plugin.
+2. Ve a la sección de plugins de tu panel de administración de WordPress y haz clic en "Añadir nuevo".
+3. Haz clic en "Subir plugin" y selecciona el archivo ZIP que descargaste.
+4. Haz clic en "Instalar ahora" y luego en "Activar".
 
-If you have any issues or questions, please open an issue on our GitHub page.
+## Uso
 
-## Contributing
+Una vez instalado y activado, el plugin comenzará a funcionar automáticamente. No hay ninguna configuración adicional necesaria.
 
-Contributions are welcome! Please open a pull request on our GitHub page.
+## Licencia
 
-## License
+Este plugin está licenciado bajo la [GPLv3 o posterior](https://www.gnu.org/licenses/gpl-3.0.html).
 
-This project is licensed under the GPL-2.0 License - see the LICENSE file for details.
+## Autor
+
+Michael Barrera - [Perfil de GitHub](https://github.com/michael2rain/)

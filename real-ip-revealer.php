@@ -7,11 +7,11 @@
  * Description: WordPress plugin that uncovers and assigns the true client IP address in environments with Cloudflare or reverse proxies.
  * Version:     1.0.2
  * Author:      Michael Barrera
- * Author URI:  https://github.com/michael2rain/real-ip-revealer
- * License:     GPLv2 or later
- * License URI: http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Requires at least: 4.9
- * Requires PHP: 7.4  // Updated PHP version requirement
+ * Author URI:  https://github.com/michael2rain/
+ * License:     GPLv3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
+ * Requires at least: 6.2.2
+ * Requires PHP: 7.4
  */
 
 
@@ -55,4 +55,27 @@ function proxy_real_ip() {
 
 // Hook the 'proxy_real_ip' function to the 'init' action
 add_action('init', 'proxy_real_ip');
+
+/**
+ * Function to display the notification in the admin panel.
+ */
+function display_ip_notification() {
+    try {
+        $ip = proxy_real_ip();
+        $class = 'notice notice-success';
+        $message = sprintf( __( 'The current user\'s IP address is: %s', 'real-ip-revealer' ), $ip );
+
+        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
+    } catch (Exception $e) {
+        // Handle the exception if the IP could not be retrieved
+        $class = 'notice notice-error';
+        $message = __( 'Could not retrieve the current user\'s IP address.', 'real-ip-revealer' );
+
+        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
+    }
+}
+
+// Hook the 'display_ip_notification' function to the 'admin_notices' action
+add_action('admin_notices', 'display_ip_notification');
+
 ?>

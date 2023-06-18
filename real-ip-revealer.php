@@ -5,7 +5,7 @@
  *
  * Plugin Name: Real IP Revealer
  * Description: WordPress plugin that uncovers and assigns the true client IP address in environments with Cloudflare or reverse proxies.
- * Version:     1.0.2
+ * Version:     1.1.0
  * Author:      Michael Barrera
  * Author URI:  https://github.com/michael2rain/
  * License:     GPLv3 or later

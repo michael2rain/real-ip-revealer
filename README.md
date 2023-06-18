@@ -10,7 +10,7 @@ Además, el plugin muestra una notificación en el panel de administración de W
 
 ## Requisitos
 
-- WordPress 6.2.2 o superior
+- WordPress 5.2 o superior
 - PHP 7.4 o superior
 
 ## Instalación

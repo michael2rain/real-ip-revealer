@@ -10,7 +10,7 @@
  * Author URI:  https://github.com/michael2rain/
  * License:     GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Requires at least: 6.2.2
+ * Requires at least: 5.2
  * Requires PHP: 7.4
  */
 

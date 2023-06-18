@@ -51,6 +51,8 @@ function proxy_real_ip() {
         throw new Exception('Proxy Real IP: No valid IP found in headers');
         $_SERVER['REMOTE_ADDR'] = $_SERVER['SERVER_ADDR']; // Fallback to server IP
     }
+
+    return $_SERVER['REMOTE_ADDR']; // Return the client IP as seen by the server
 }
 
 // Hook the 'proxy_real_ip' function to the 'init' action
@@ -62,7 +64,7 @@ add_action('init', 'proxy_real_ip');
 function display_ip_notification() {
     try {
         $ip = proxy_real_ip();
-        $class = 'notice notice-success';
+        $class = 'notice notice-success is-dismissible';
         $message = sprintf( __( 'The current user\'s IP address is: %s', 'real-ip-revealer' ), $ip );
 
         printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));

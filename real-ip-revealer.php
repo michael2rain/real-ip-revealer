@@ -28,14 +28,6 @@ if (class_exists('WooCommerce')) {
     add_action('init', 'proxy_real_ip');
 }
 
-// Hook the 'display_ip_notification' function to the 'admin_notices' action
-add_action('admin_notices', 'display_ip_notification');
-
-// Use AJAX to permanently dismiss the notification
-add_action('wp_ajax_real_ip_revealer_dismiss_notification', function() {
-    update_option('real_ip_revealer_notification_dismissed', 'yes');
-});
-
 /**
  * Function to get the real IP from the client when behind a proxy.
  * It checks a list of headers in order and returns the first valid public IP found.
@@ -72,22 +64,31 @@ function proxy_real_ip() {
 /**
  * Function to display the notification in the admin panel.
  */
-function display_ip_notification() {
-    $ip = proxy_real_ip();
+function rir_display_ip_notification() {
+    // Check if the notification has been dismissed
+    if (get_option('real_ip_revealer_notification_dismissed') == 'yes') {
+        return;
+    }
 
-    if ($ip !== $_SERVER['SERVER_ADDR']) {
+    $ip = rir_proxy_real_ip();
+    if ($ip !== $_SERVER['SERVER_ADDR']) { // If we have a valid client IP
         $class = 'notice notice-success is-dismissible real-ip-revealer-notification';
-        $message = sprintf( __( 'The current user\'s IP address is: %s', 'real-ip-revealer' ), $ip );
-    } else {
+        $message = sprintf(__('The current user\'s IP address is: %s', 'real-ip-revealer'), $ip);
+    } else { // If we fell back to the server IP
         $class = 'notice notice-error is-dismissible real-ip-revealer-notification';
-        $message = __( 'Could not retrieve the current user\'s IP address.', 'real-ip-revealer' );
+        $message = __('Could not retrieve the current user\'s IP address.', 'real-ip-revealer');
     }
 
     // Add JavaScript to the footer to handle the dismissal
-    add_action('admin_footer', 'add_dismiss_script');
+    add_action('admin_footer', 'rir_add_dismiss_script');
 
     printf('<div class="%1$s" data-dismissible="disable-done-forever"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
 }
+
+// Use AJAX to permanently dismiss the notification
+add_action('wp_ajax_real_ip_revealer_dismiss_notification', function() {
+    update_option('real_ip_revealer_notification_dismissed', 'yes');
+});
 
 function add_dismiss_script() {
     echo "

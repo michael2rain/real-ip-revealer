@@ -5,13 +5,13 @@
  *
  * Plugin Name: Real IP Revealer
  * Description: WordPress plugin that uncovers and assigns the true client IP address in environments with Cloudflare or reverse proxies.
- * Version:     1.1.2
+ * Version:     1.1.4
  * Author:      Michael Barrera
  * Author URI:  https://github.com/michael2rain/
  * License:     GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Requires at least: 5.2
- * Requires PHP: 7.5
+ * Requires PHP: 7.4
  */
 
 // Avoid direct calls to this file
@@ -19,20 +19,21 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-// Detecta si WooCommerce está activo
+// Check if WooCommerce is active
 if (class_exists('WooCommerce')) {
-    // Si WooCommerce está activo, engancha tu función al proceso de pago de WooCommerce
-    add_action('woocommerce_checkout_order_processed', 'proxy_real_ip', 10, 0);
+    // If WooCommerce is active, hook your function to WooCommerce's checkout process
+    add_action('woocommerce_checkout_order_processed', 'rir_proxy_real_ip', 10, 1);
 } else {
-    // Si WooCommerce no está activo, engancha tu función a la acción 'init'
-    add_action('init', 'proxy_real_ip');
+    // If WooCommerce is not active, hook your function to the 'init' action
+    add_action('init', 'rir_proxy_real_ip');
 }
 
 /**
  * Function to get the real IP from the client when behind a proxy.
  * It checks a list of headers in order and returns the first valid public IP found.
+ * @param int $order_id The ID of the order being processed (only when hooked to WooCommerce).
  */
-function proxy_real_ip() {
+function rir_proxy_real_ip($order_id = null) {
     $ip_addr = null;
 
     // Define the order of the headers to be checked
@@ -56,6 +57,11 @@ function proxy_real_ip() {
     } else {
         error_log('Proxy Real IP: No valid IP found in headers');
         $_SERVER['REMOTE_ADDR'] = $_SERVER['SERVER_ADDR']; // Fallback to server IP
+    }
+
+    // If this function is hooked to WooCommerce and we have an order ID, update the order meta with the real IP
+    if ($order_id && $ip_addr) {
+        update_post_meta($order_id, '_customer_ip_address', $ip_addr);
     }
 
     return $_SERVER['REMOTE_ADDR']; // Return the client IP as seen by the server
@@ -90,17 +96,17 @@ add_action('wp_ajax_real_ip_revealer_dismiss_notification', function() {
     update_option('real_ip_revealer_notification_dismissed', 'yes');
 });
 
-function add_dismiss_script() {
-    echo "
+function rir_add_dismiss_script() {
+    echo '
     <script>
-    jQuery(document).on('click', '.real-ip-revealer-notification .notice-dismiss', function() {
+    jQuery(document).on("click", ".real-ip-revealer-notification .notice-dismiss", function() {
         jQuery.ajax({
             url: ajaxurl,
             data: {
-                action: 'real_ip_revealer_dismiss_notification'
+                action: "real_ip_revealer_dismiss_notification"
             }
         });
     });
     </script>
-    ";
+    ';
 }
